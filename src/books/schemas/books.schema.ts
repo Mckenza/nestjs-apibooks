@@ -17,6 +17,7 @@ export class Book{
 
     @Prop()
     isbn: string;
+
 }
 
 export const BookSchema = SchemaFactory.createForClass(Book);

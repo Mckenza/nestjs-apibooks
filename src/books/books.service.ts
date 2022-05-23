@@ -8,9 +8,16 @@ export class BooksService {
 
     constructor(@InjectModel(Book.name) private bookModel: Model<BookDocument>) { }
 
-    async getAlldata() {
+    async getAlldata(range) {
         const parseData = await this.bookModel.find().exec();
-        return parseData;
+        const buf = [];
+        for (let i = range[0]; i <= range[1]; i++) {
+            if(i >= parseData.length){
+                break;
+            }
+            buf.push(parseData[i]);
+        }
+        return [buf, parseData.length];
     }
 
     async getById(id) {
@@ -20,12 +27,20 @@ export class BooksService {
 
     async create(body) {
         const bodyReq = new this.bookModel(body);
-        return bodyReq.save();
+        console.log(bodyReq)
+        return await bodyReq.save();
     }
 
     async remove(id) {
-        console.log(123)
         return this.bookModel.findByIdAndRemove(id);
+    }
+
+    async removeMany(list){
+        console.log(list)
+        const test = list.map(item => {
+            return this.bookModel.findByIdAndRemove(item);
+        })
+        return Promise.all(test);
     }
 
     async edit(id, body) {

@@ -1,4 +1,5 @@
-import { Body, Controller, Delete, Dependencies, Get, Param, Post, Put, Query } from "@nestjs/common";
+import { Body, Controller, Delete, Dependencies, Get, Header, Param, Post, Put, Query, Res } from "@nestjs/common";
+import { query } from "express";
 import { BooksService } from "./books.service";
 
 @Controller('api.books')
@@ -10,8 +11,9 @@ export class BooksController{
     // Декораторы
 
     @Get()
-    getAllData(){
-        return this.booksService.getAlldata();
+    async getAllData(@Query() query){
+        const [data, length] = await this.booksService.getAlldata(JSON.parse(query.range));
+        return [data, length];
     }
 
     @Get(':id')
@@ -33,7 +35,7 @@ export class BooksController{
     @Delete()
     deleteBooks(@Query() query){
         console.log(query);
-        return this.booksService.remove(JSON.parse(query.filter).id[0]);
+        return this.booksService.removeMany(JSON.parse(query.filter).id);
     }
 
     @Put(':id')
