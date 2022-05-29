@@ -27,8 +27,7 @@ export class BooksService {
 
     async create(body) {
         const bodyReq = new this.bookModel(body);
-        console.log(bodyReq)
-        return await bodyReq.save();
+        return await bodyReq.save();;
     }
 
     async remove(id) {
@@ -36,7 +35,6 @@ export class BooksService {
     }
 
     async removeMany(list){
-        console.log(list)
         const test = list.map(item => {
             return this.bookModel.findByIdAndRemove(item);
         })

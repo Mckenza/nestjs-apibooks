@@ -1,5 +1,6 @@
 import { Body, Controller, Delete, Dependencies, Get, Header, Param, Post, Put, Query, Res } from "@nestjs/common";
 import { query } from "express";
+import { BooksDto } from "./books-dto/books.dto";
 import { BooksService } from "./books.service";
 
 @Controller('api.books')
@@ -23,8 +24,8 @@ export class BooksController{
 
     // Почитать про DTO
     @Post()
-    setData(@Body() body){
-        return this.booksService.create(body);
+    async setData(@Body() body: BooksDto){
+        return await this.booksService.create(body);;
     }
 
     @Delete(':id')
@@ -34,13 +35,11 @@ export class BooksController{
 
     @Delete()
     deleteBooks(@Query() query){
-        console.log(query);
         return this.booksService.removeMany(JSON.parse(query.filter).id);
     }
 
     @Put(':id')
     editBook(@Body() body, @Param('id') id){
-        console.log(4);
         return this.booksService.edit(id, body);
     }
     
