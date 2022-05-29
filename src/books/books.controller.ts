@@ -3,7 +3,7 @@ import { query } from "express";
 import { BooksDto } from "./books-dto/books.dto";
 import { BooksService } from "./books.service";
 
-@Controller('api.books')
+@Controller('')
 export class BooksController{
 
     constructor(private booksService: BooksService){
