@@ -10,7 +10,7 @@ export class Book{
     title: string;
 
     @Prop()
-    year: string;
+    year: number;
 
     @Prop()
     author: string

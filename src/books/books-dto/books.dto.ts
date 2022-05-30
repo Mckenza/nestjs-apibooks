@@ -7,7 +7,6 @@ export class BooksDto {
 
     @IsNotEmpty()
     @IsNumber()
-
     year: number;
 
     @IsNotEmpty()
