@@ -2,24 +2,24 @@ import { Controller, Get, Query, Response, StreamableFile } from "@nestjs/common
 import { createReadStream } from "fs";
 const fs = require('fs');
 const path = require('path');
-const Emmiter = require('events');
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 import { join } from "path";
 import { ReportBookService } from "./report.service";
 
+/* csv reader and writer */
+// https://stackabuse.com/reading-and-writing-csv-files-with-node-js/
 
+/* Link: http://localhost:3000/api.books/report?maxYear=4000&minYear=1000 */
 @Controller('')
 export class ReportBookController {
 
-    constructor(private reportService: ReportBookService) {
-
-    }
+    constructor(private reportService: ReportBookService) { }
 
     @Get()
-    async getFile(@Response({ passthrough: true }) res): Promise<StreamableFile> {
+    async getFile(@Query() query, @Response({ passthrough: true }) res): Promise<StreamableFile> {
         const pathFolder = path.join(__dirname, '..', '..', '..', 'fileReport');
-        const emmiter = new Emmiter();
-        const data = await this.reportService.getData([1000, 4000]);
+        console.log(query);
+        const data = await this.reportService.getData([query.minYear, query.maxYear]);
 
         function checkFile() {
             return new Promise((resolve, reject) => {
@@ -57,11 +57,11 @@ export class ReportBookController {
             return csvWrite
                 .writeRecords(data)
                 .then(() => ('csv created'))
-                .catch(() => console.log('csv not created'))
-                
+                .catch(() => 'csv not created')
+
         }
 
-        function sendFile(){
+        function sendFile() {
             const file = createReadStream(join(pathFolder, 'fileReport.csv'));
             res.set({
                 'Content-Type': 'application/json',
@@ -70,31 +70,42 @@ export class ReportBookController {
             return new StreamableFile(file);
         }
 
-        try{
+        try {
             const check = await checkFile();
             console.log(check);
-            if(check === 'file exists'){
+            if (check === 'file exists') {
                 const writeFile = await createCSVFile();
                 console.log(writeFile);
-                if(writeFile === 'csv created'){
-                    console.log(123);
+                if (writeFile === 'csv created') {
                     return sendFile();
-                } 
+                }
             }
-            //return sendFile();
-            /*if(check === 'file exists from promise'){
-                console.log(check);
-                const createCSV = await createCSVFile();
-            }*/
-        } catch(message){
-            if(message === 'file not exists'){
-                const checkDir = await createFile();
+        } catch (message) {
+            if (message === 'file not exists') {
+                try {
+                    const checkDir = await createFile();
+                    const writeFile = await createCSVFile();
+                    console.log(writeFile);
+                    if (writeFile === 'csv created') {
+
+                        return sendFile();
+                    }
+                } catch (message) {
+                    const writeFile = await createCSVFile();
+                    console.log(writeFile);
+                    if (writeFile === 'csv created') {
+
+                        return sendFile();
+                    }
+                }
+            }
+            if (message === 'csv not created') {
+                console.log(message);
             }
         }
-        
-        /*
 
-        await checkFile()
+        /*
+        checkFile()
             .then((message) => {
                 console.log(message);
                 return Promise.reject('file exists from promise');

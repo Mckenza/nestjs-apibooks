@@ -25,7 +25,9 @@ export class BooksController{
     // Почитать про DTO
     @Post()
     async setData(@Body() body: BooksDto){
-        return await this.booksService.create(body);;
+        const test = await this.booksService.create(body);
+        console.log(test);
+        return test;
     }
 
     @Delete(':id')

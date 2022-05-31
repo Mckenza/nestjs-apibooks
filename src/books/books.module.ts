@@ -8,10 +8,12 @@ import { Book, BookSchema } from "./schemas/books.schema";
 
 @Module({
     imports: [
-        ReportBookModule,
+        MongooseModule.forRoot('mongodb://localhost:27017/books'),
         MongooseModule.forFeature([
             { name: Book.name, schema: BookSchema }
         ]),
+        ReportBookModule,
+
     ],
     providers: [BooksService],
     controllers: [BooksController],
